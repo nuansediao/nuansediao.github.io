@@ -2,7 +2,7 @@ var gulp = require('gulp'),
 	imagemin = require('gulp-imagemin'),
 	less = require('gulp-less'),
 	minifycss = require ('gulp-minify-css'),
-	uglify = require('gulp-uglity'),
+	uglify = require('gulp-uglify'),
 	rename = require('gulp-rename'),
 	clean = require('gulp-clean'),
 	spriter = require('gulp-css-spriter'),
@@ -12,7 +12,7 @@ var gulp = require('gulp'),
 // html处理
 gulp.task('html',function(){
 	var htmlDrc = 'drc/*.html',
-		htmlSrc = 'src/*.html';
+		htmlSrc = 'src/';
 	gulp.src(htmlDrc)
 		.pipe(gulp.dest(htmlSrc))
 });
@@ -20,31 +20,32 @@ gulp.task('html',function(){
 //img处理
 gulp.task('img',function(){
 	var imgDrc = 'drc/img/**',
-		imgSrc = 'src/img/**';
+		imgSrc = 'src/img';
 	gulp.src(imgDrc)
 	.pipe(imagemin())
-	.pipe(gulp.desk(imgSrc))
+	.pipe(gulp.dest(imgSrc))
 })
 
 //css处理
 gulp.task('css',function(){
 	var cssDrc = 'drc/css/**',
-		cssSrc = 'Src/css/**';
-	gulp.src(imgDrc)
+		cssSrc = 'src/css';
+	gulp.src(cssDrc)
+		.pipe(less())
 		.pipe(minifycss())
 		.pipe(rename({suffix:'.min'}))
-		.pipe(gulp.desk(cssSrc))
+		.pipe(gulp.dest(cssSrc))
 
 })
 
 //js处理
 gulp.task('js',function(){
 	var jsDrc = 'drc/js/*.js'
-		jsSrc = 'Src/js/*.js';
+		jsSrc = 'src/js/';
 	gulp.src(jsSrc)
 		.pipe(uglify())
 		.pipe(rename({suffix:'.min'}))
-		.pipe(gulp.desk(jsSrc))
+		.pipe(gulp.dest(jsSrc))
 })
 
 //雪碧图处理
@@ -58,18 +59,36 @@ gulp.task('spriter',function(){
 		//如下将生产：backgound:url(../images/sprite20324232.png)
 		'pathToSpriteSheetFromCSS':'./drc/image/sprite'+timestamp+'.png'
 	}))
-	.pipe(gulp.desk('./src'));
+	.pipe(gulp.dest('./src'));
 })
 
-gulp.task('clean',function(){
-	gulp.src(['./src/css','./src/js','./src/img','./src/html'])
-		.pipe(clean());
 
-})
+// 清空图片、样式、js
+gulp.task('clean', function() {
+    gulp.src(['./src/css', './src/js', './src/img','./src/*.html'], {read: false})
+        .pipe(clean());
+});
 
+//默认运行程序
 gulp.task('default',['clean'],function(){
-	gulp.start('html','js','css','img');
+	gulp.start('html','css','img','js');
+});
 
+// 静态服务器
+gulp.task('browser-sync', function() {
+    browserSync.init({
+    	files: "src/**",
+        server: {
+            baseDir: "src/"  //index.html在哪里
+        }
+    });
+});
+
+
+//监听任务，运行语句 gulp watch
+
+gulp.task('watch',['browser-sync'], function(){
+		gulp.start('css','html','img','js');
 
 	//监听html
 	gulp,watch('./drc/*.html',function(){
