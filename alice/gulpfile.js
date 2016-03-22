@@ -7,11 +7,12 @@ var gulp = require('gulp'),
 	clean = require('gulp-clean'),
 	spriter = require('gulp-css-spriter'),
 	browserSync = require('browser-sync').create();
+	fileinclude = require('gulp-file-include');
 
 
 // html处理
 gulp.task('html',function(){
-	var htmlDrc = 'drc/*.html',
+	var htmlDrc = 'src/*.html',
 		htmlSrc = 'src/';
 	gulp.src(htmlDrc)
 		.pipe(gulp.dest(htmlSrc))
@@ -77,7 +78,7 @@ gulp.task('default',['clean'],function(){
 // 静态服务器
 gulp.task('browser-sync', function() {
     browserSync.init({
-    	files: "src/**",
+    	files: "./src/**",
         server: {
             baseDir: "src/"  //index.html在哪里
         }
@@ -85,23 +86,37 @@ gulp.task('browser-sync', function() {
 });
 
 
+//配置 HTML 模块化处理  引导时这么写 “@@include('templates/footer.html')”
+               
+gulp.task('include',function(){
+	gulp.src('./drc/*.html')
+    .pipe(fileinclude({
+      prefix: '@@',
+      basepath: '@file'
+    }))
+    .pipe(gulp.dest('./src'));
+	
+})
+
+
 //监听任务，运行语句 gulp watch
 
 gulp.task('watch',['browser-sync'], function(){
-		gulp.start('css','html','img','js');
+		gulp.start('include','css','html','img','js');
 
 	//监听html
-	gulp,watch('./drc/*.html',function(){
-		gulp.run('html');
+	gulp.watch('./drc/*.html',function(){
+		gulp.run('include');
+		gulp.run('html')
 	})
 
 	//监听css
-	gulp,watch('./drc/css/**',function(){
+	gulp.watch('./drc/css/**',function(){
 		gulp.run('css');
 	})
 
 	//监听js
-	gulp,watch('./drc/js/*.js',function(){
+	gulp.watch('./drc/js/*.js',function(){
 		gulp.run('js');
 	})
 
