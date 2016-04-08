@@ -6,23 +6,27 @@ var gulp = require('gulp'),
     rename = require('gulp-rename'),
     clean = require('gulp-clean'),
     spriter = require('gulp-css-spriter'),
-    browserSync = require('browser-sync').create();
-fileinclude = require('gulp-file-include');
-concat = require('gulp-concat');
+    browserSync = require('browser-sync').create(),
+    fileinclude = require('gulp-file-include'),
+    concat = require('gulp-concat'),
+    // svgSprite  =  require('gulp-svg-sprite'),
+    svgstore = require('gulp-svgstore'),
+    svgmin = require('gulp-svgmin'),
+    path = require('path');
 
 
 // html处理
 gulp.task('html', function() {
-    var htmlDrc = 'src/*.html',
-        htmlSrc = 'src/';
+    var htmlDrc = './src/*.html',
+        htmlSrc = './src/';
     gulp.src(htmlDrc)
         .pipe(gulp.dest(htmlSrc));
 });
 
 //img处理
 gulp.task('img', function() {
-    var imgDrc = 'drc/img/**',
-        imgSrc = 'src/img';
+    var imgDrc = './drc/img/**',
+        imgSrc = './src/img';
     gulp.src(imgDrc)
         .pipe(imagemin())
         .pipe(gulp.dest(imgSrc));
@@ -30,24 +34,27 @@ gulp.task('img', function() {
 
 //css处理
 gulp.task('less', function() {
-    var cssDrc = 'drc/css/*.less',
-        cssSrc = 'drc/css';
+    var cssDrc = './drc/less/*.less',
+        cssSrc = './drc/css/';
     gulp.src(cssDrc)
+        // .pipe(less({
+        //     paths: [path.join(__dirname, 'less', 'includes')]
+        // }))
         .pipe(less())
-        .pipe(gulp.dest(cssDrc));
+        .pipe(gulp.dest(cssSrc));
 
 });
 gulp.task('css', function() {
-    gulp.src('drc/css/*.css')
+    gulp.src('./drc/css/*.css')
         .pipe(concat('common.css'))
-        .pipe(minifycss())
+        // .pipe(minifycss())
         .pipe(rename({ suffix: '.min' }))
         .pipe(gulp.dest('src/css'));
 });
 
 //js处理
 gulp.task('js', function() {
-    var jsDrc = 'drc/js/*.js';
+    var jsDrc = './drc/js/*.js';
     jsSrc = 'src/js';
     gulp.src(jsDrc)
         .pipe(uglify())
@@ -59,7 +66,7 @@ gulp.task('js', function() {
 gulp.task('spriter', function() {
     var timestamp = +newDate();
     //需要自动合并雪碧图的样式文件
-    returngulp.src('./drc/image/**')
+    return gulp.src('./drc/image/**')
         //生成的spriter的位置
         .pipe(spriter({
             'spriteSheet': './drc/image/sprite' + timestamp + '.png',
@@ -67,8 +74,35 @@ gulp.task('spriter', function() {
             //如下将生产：backgound:url(../images/sprite20324232.png)
             'pathToSpriteSheetFromCSS': './drc/image/sprite' + timestamp + '.png'
         }))
-        .pipe(gulp.dest('./src'));
+        .pipe(gulp.dest('./drc/spriter'));
 });
+
+//雪碧图转为svg
+gulp.task('svg',function() {
+    return gulp.src('./drc/image/**')
+    .pipe(svgSprite())
+    .pipe(gulp.dest('.drc/img'));
+
+});
+
+gulp.task('svgstore', function () {
+    return gulp
+        .src('./drc/image/**')
+        .pipe(svgmin(function (file) {
+            var prefix = path.basename(file.relative, path.extname(file.relative));
+            return {
+                plugins: [{
+                    cleanupIDs: {
+                        prefix: prefix + '-',
+                        minify: true
+                    }
+                }]
+            };
+        }))
+        .pipe(svgstore())
+        .pipe(gulp.dest('.drc/img'));
+});
+
 
 
 // 清空图片、样式、js
@@ -79,7 +113,7 @@ gulp.task('clean', function() {
 
 //默认运行程序
 gulp.task('default', ['clean'], function() {
-    gulp.start('html', 'css', 'img', 'js', 'less');
+    gulp.start('html', 'less', 'img', 'js','css' );
 });
 
 // 静态服务器
@@ -109,7 +143,7 @@ gulp.task('include', function() {
 //监听任务，运行语句 gulp watch
 
 gulp.task('watch', ['browser-sync'], function() {
-    gulp.start('include', 'css', 'html', 'img', 'js', 'less');
+    gulp.start('include', 'less', 'html', 'img', 'js', 'css');
 
     //监听html
     gulp.watch('./drc/*.html', function() {
@@ -118,12 +152,13 @@ gulp.task('watch', ['browser-sync'], function() {
     });
 
     //监听less
-    gulp.watch('./drc/css/*.less', function() {
+    gulp.watch('./drc/less/*.less', function() {
         gulp.run('less');
+        gulp.run('css');
     });
 
     //监听css
-    gulp.watch('./drc/css/*.css', function() {
+    gulp.watch('./src/css/*.css', function() {
         gulp.run('css');
     });
 
