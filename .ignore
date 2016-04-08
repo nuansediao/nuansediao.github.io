@@ -9,3 +9,4 @@ gulpfile.js
 # 忽略所有.o和 .a文件.
 #*.[oa]
 test.txt
+cong.sh
