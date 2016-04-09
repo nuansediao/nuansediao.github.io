@@ -1,4 +1,6 @@
 # 以'#'开始的行，被视为注释.                                                                                                                          
+#
+Please enter a commit message to explain why this merge is necessary,
 # 忽略掉所有文件名是 foo.txt的文件.
 node_modules
 gulpfile.js
