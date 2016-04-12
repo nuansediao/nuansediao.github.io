@@ -69,7 +69,9 @@ theme: hexo-theme-yilia
 # Deployment
 ## Docs: https://hexo.io/docs/deployment.html
 deploy:
-  type:
+  type: git
+  repo: https://github.com/nuansediao/nuansediao.github.io.git
+  branch: master
 
 
 
