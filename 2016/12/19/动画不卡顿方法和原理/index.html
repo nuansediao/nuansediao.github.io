@@ -1,0 +1,79 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="description"><title>动画不卡顿方法和原理 | 暖色调的白菜手册</title><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/normalize/5.0.0/normalize.min.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/pure/0.6.0/pure-min.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/pure/0.6.0/grids-responsive-min.css"><link rel="stylesheet" type="text/css" href="/css/style.css?v=0.0.0"><link rel="stylesheet" href="//cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css"><script type="text/javascript" src="//cdn.bootcss.com/jquery/3.1.1/jquery.min.js"></script><link rel="Shortcut Icon" type="image/x-icon" href="/favicon.ico"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><link rel="apple-touch-icon-precomposed" href="/apple-touch-icon.png"></head><body><div class="body_container"><div id="header"><div class="site-name"><h1 class="hidden">动画不卡顿方法和原理</h1><a id="logo" href="/.">暖色调的白菜手册</a><p class="description"></p></div><div id="nav-menu"><a href="/." class="current"><i class="fa fa-home"> 主页😝</i></a><a href="/archives/"><i class="fa fa-archive"> 目录😝</i></a></div></div><div id="layout" class="pure-g"><div class="pure-u-1 pure-u-md-3-4"><div class="content_container"><div class="post"><h1 class="post-title">动画不卡顿方法和原理</h1><div class="post-meta">Dec 19, 2016<script src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js" async></script><span id="busuanzi_container_page_pv"> | <span id="busuanzi_value_page_pv"></span><span> Hits</span></span></div><a data-thread-key="2016/12/19/动画不卡顿方法和原理/" href="/2016/12/19/动画不卡顿方法和原理/#comments" class="ds-thread-count"></a><div class="post-content"><p>在做项目的时候发现用css3做动画的时候发现在安卓手机上会出现卡顿现象,和在ios,pc上效果不一样</p>
+<h4 id="卡顿的原因有以下几种可能"><a href="#卡顿的原因有以下几种可能" class="headerlink" title="卡顿的原因有以下几种可能"></a>卡顿的原因有以下几种可能</h4><ol>
+<li>该元素在文档流里,每次动画移动引起重排和重绘,影响浏览器性能</li>
+<li>设置了background有关的动画效果</li>
+<li><p>过度使用-webkit-transform:transition3d/translateZ,opacity &lt; 1开启了GPU动画,过度依赖GPU而导致性能下降。或者开启GPU硬件加速之后，有些时候可能会导致浏览器频繁闪烁或抖动.解决方法如下</p>
+<figure class="highlight scss"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">-webkit-<span class="attribute">backface-visibility</span>:hidden;</div><div class="line">-webkit-<span class="attribute">perspective</span>:<span class="number">1000</span>;</div></pre></td></tr></table></figure>
+</li>
+<li><p>该元素本身设置了left,right,top,bottom,margin等</p>
+</li>
+</ol>
+<h4 id="如何知道自己做的动画是否流畅"><a href="#如何知道自己做的动画是否流畅" class="headerlink" title="如何知道自己做的动画是否流畅"></a>如何知道自己做的动画是否流畅</h4><p>可以用safari 和chrome 查询 (盗用别人的图~)</p>
+<ul>
+<li>Chrome自带的帧率监测工具，用于侦听全局帧率，以及页面重绘耗时<br><img src="http://alexorz.github.io/animation-performance-guide/images/chrome-fps-panel.png" alt="image"><br><img src="http://alexorz.github.io/animation-performance-guide/images/chrome-ms-panel.png" alt="image"><br><img src="http://alexorz.github.io/animation-performance-guide/images/rendering-panel-skitched.png" alt="image">    </li>
+<li><p>Chrome Timeline，杀手级监测 &amp; 调试工具<br><img src="http://alexorz.github.io/animation-performance-guide/images/chrome-timeline-skitched.png" alt="image"><br>操作如下:<br>Chrome Timeline<br><img src="http://alexorz.github.io/animation-performance-guide/images/chrome-timeline-full-skitched.png" alt="image"><br>Safari Timeline<br><img src="http://alexorz.github.io/animation-performance-guide/images/safari-timeline.png" alt="iamge"></p>
+</li>
+<li><p>帧率能够量化动画的流畅程度，流畅的动画一般具备两个特点  </p>
+</li>
+</ul>
+<ol>
+<li>帧率高(接近60fps最佳) </li>
+<li>帧率稳定，波动少（极少出现跳帧现象）</li>
+</ol>
+<h4 id="h5动画的选择"><a href="#h5动画的选择" class="headerlink" title="h5动画的选择"></a>h5动画的选择</h4><p>想要做动画,有很多选择,js,jquery,css3,那么那种比较流程比较快呢,</p>
+<ul>
+<li>jquery:  jquery是比较慢的,原因如下</li>
+</ul>
+<ol>
+<li>影响文档流,多次导致重排和重绘</li>
+<li>内存消耗打,经常会触发垃圾回收,垃圾回收容易让动画卡住</li>
+<li>使用setInterval,setTimeout,有篇文章就详细讲了关于动画使用了setInterval,setTimeout的原因<br><a href="http://www.infoq.com/cn/articles/javascript-high-performance-animation-and-page-rendering" target="_blank" rel="external">http://www.infoq.com/cn/articles/javascript-high-performance-animation-and-page-rendering</a></li>
+</ol>
+<ul>
+<li>css3动画 transition: css3比jquery快</li>
+</ul>
+<ol>
+<li>优化dom操作</li>
+<li>使用类似RAF的机制</li>
+<li>强制使用硬件加速(GPU)</li>
+</ol>
+<p>但是有兼容问题,ie10以下不支持transition,并且跟js配合使用灵活性不高,只能用js触发css3,却不能控制速度动画效果等</p>
+<ul>
+<li>Javascript动画</li>
+</ul>
+<ol>
+<li>同步DOM &gt;-在整个动画链中微调堆栈以达到最小的layout thrashing。</li>
+<li>缓存链式操作中的属性值，这样可以最小化DOM的查询操作</li>
+<li>在同一个跨同层元素的调用中缓存单位转化比率（例如px转换成%、em等等单位）</li>
+<li>忽略那些变动小到根本看不出来的DOM更新</li>
+</ol>
+<h6 id="比如Velocity-js动画"><a href="#比如Velocity-js动画" class="headerlink" title="比如Velocity.js动画 :"></a>比如Velocity.js动画 :</h6><p>没使用过,下次琢磨一下,网上说动画效果不错,<br><a href="http://velocityjs.org/" target="_blank" rel="external">官网文档库</a><br><a href="http://julian.com/research/velocity/demo.html" target="_blank" rel="external">3D 动画的demo</a><br><a href="http://danielraftery.com/read/Animating-Awesomeness-with-Velocityjs" target="_blank" rel="external">虚拟世界</a></p>
+<ol>
+<li>Velocity 包含了 jQuery、 jQuery UI 和 CSS transition 的功能</li>
+<li>轻量级,易用性强,使用了跟jquery类似的方法,比如$.animate(),$.fade(),$.delay()等</li>
+<li>具有流畅性,兼容性</li>
+</ol>
+<ul>
+<li>如何保证css3动画的流畅<br>有个英文网站上讲述了关于css3流畅的方法,大致翻译下加上我查找的一些资料总结下:<br><a href="https://www.html5rocks.com/en/tutorials/speed/high-performance-animations/" target="_blank" rel="external">英文网站css3高性能动画链接</a></li>
+</ul>
+<ol>
+<li>动画大小使用transition: scale</li>
+<li>移动用transition:translate(npx,npx);</li>
+<li>转动角度:transform:rotate</li>
+<li>改变透明度用opacity:0…1</li>
+<li>背景替换有卡顿现象少用,要用的话在对象再加一层div,形成背景覆盖,少用background-position</li>
+<li>创建独立的Layer（层）（为避免和div（层）产生混淆文中尽量同一使用Layer）,减少动画时过多的重绘和重排</li>
+<li>合理使用-webkit-transform:transition3d/translateZ,opacity &lt; 1开启GPU渲染网页.</li>
+<li>如果需要JS执行动画，使用requestAnimationFrame,或者Velocity,避免使用jQuery动画,setTimeout,setInterval。window.requestAnimationFrame 是一个专门为动画而生的 web API 。它通知浏览器在页面重绘前执行你的回调函数。通常来说被调用的频率是每秒60次,用它来代替setInterval,setTimeout<br><a href="http://www.cnblogs.com/Wayou/p/requestAnimationFrame.html" target="_blank" rel="external">了解 requestAnimationFrame</a>  </li>
+<li>阴影渐显动画尽量用伪类的opacity来实现。<a href="https://www.w3ctrain.com/2015/11/25/how-to-animate-box-shadow/" target="_blank" rel="external">demo</a></li>
+</ol>
+</div><script type="text/javascript" src="/js/share.js?v=0.0.0" async></script><a data-url="http://nuansediao.cc/2016/12/19/动画不卡顿方法和原理/" data-id="ciwvs3wkj0001r7rico5p30u7" class="article-share-link">分享到</a><div class="tags"></div><div class="post-nav"><a href="/2016/04/12/nuansediao/" class="next">nuansediao</a></div><div data-thread-key="2016/12/19/动画不卡顿方法和原理/" data-title="动画不卡顿方法和原理" data-url="http://nuansediao.cc/2016/12/19/动画不卡顿方法和原理/" class="ds-share flat"><div class="ds-share-inline"><ul class="ds-share-icons-16"><li data-toggle="ds-share-icons-more"><a href="javascript:void(0);" class="ds-more">分享到：</a></li><li><a href="javascript:void(0);" data-service="weibo" class="ds-weibo">微博</a></li><li><a href="javascript:void(0);" data-service="qzone" class="ds-qzone">QQ空间</a></li><li><a href="javascript:void(0);" data-service="qqt" class="ds-qqt">腾讯微博</a></li><li><a href="javascript:void(0);" data-service="wechat" class="ds-wechat">微信</a></li></ul><div class="ds-share-icons-more"></div></div></div><div data-thread-key="2016/12/19/动画不卡顿方法和原理/" data-title="动画不卡顿方法和原理" data-url="http://nuansediao.cc/2016/12/19/动画不卡顿方法和原理/" data-author-key="1" class="ds-thread"></div></div></div></div><div class="pure-u-1-4 hidden_mid_and_down"><div id="sidebar"><div class="widget"><form action="//www.google.com/search" method="get" accept-charset="utf-8" target="_blank" class="search-form"><input type="text" name="q" maxlength="20" placeholder="Search"/><input type="hidden" name="sitesearch" value="http://nuansediao.cc"/></form></div><div class="widget"><div class="widget-title"><i class="fa fa-file-o"> 最新文章</i></div><ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/2016/12/19/动画不卡顿方法和原理/">动画不卡顿方法和原理</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/04/12/nuansediao/">nuansediao</a></li></ul></div><div class="widget"><div class="comments-title"><i class="fa fa-comment-o"> 最近评论</i></div><div data-num-items="5" data-show-avatars="0" data-show-time="1" data-show-admin="0" data-excerpt-length="32" data-show-title="1" class="ds-recent-comments"></div></div><div class="widget"><div class="widget-title"><i class="fa fa-external-link"> 友情链接</i></div><ul></ul><a href="https://github.com/nuansediao" title="github" target="_blank">github</a><ul></ul><a href="https://www.zhihu.com/people/nuan-nian-nian/activities" title="知乎" target="_blank">知乎</a></div></div></div><div class="pure-u-1 pure-u-md-3-4"><div id="footer">© <a href="/." rel="nofollow">暖色调的白菜手册.</a> Powered by<a rel="nofollow" target="_blank" href="https://hexo.io"> Hexo.</a><a rel="nofollow" target="_blank" href="https://github.com/tufu9441/maupassant-hexo"> Theme</a> by<a rel="nofollow" target="_blank" href="https://github.com/pagecho"> Cho.</a></div></div></div><a id="rocket" href="#top" class="show"></a><script type="text/javascript" src="/js/totop.js?v=0.0.0" async></script><script type="text/javascript" src="//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.pack.js" async></script><script type="text/javascript" src="/js/fancybox.js?v=0.0.0" async></script><link rel="stylesheet" type="text/css" href="/css/jquery.fancybox.css?v=0.0.0"><script>var duoshuoQuery = {short_name:'nuansediao'};
+(function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0]
+        || document.getElementsByTagName('body')[0]).appendChild(ds);
+})();
+</script><script type="text/javascript" src="/js/codeblock-resizer.js?v=0.0.0"></script><script type="text/javascript" src="/js/smartresize.js?v=0.0.0"></script></div></body></html>
