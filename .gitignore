@@ -12,6 +12,5 @@ gulpfile.js
 #*.[oa]
 test.txt
 cong.sh
-maupassant
-hexo-theme-yilia
+/themes
 
