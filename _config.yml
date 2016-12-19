@@ -3,16 +3,16 @@
 ## Source: https://github.com/hexojs/hexo/
 
 # Site
-title: 暖色调
-subtitle: 喵呜～欢迎来到暖色调个人网站
-description: 喵
-author: 小颖子
-language: zh-Hans
+title: 暖色调的白菜手册
+subtitle:
+description:
+author: 暖色调
+language: zh-CN
 timezone:
 
 # URL
 ## If your site is put in a subdirectory, set url as 'http://yoursite.com/child' and root as '/child/'
-url: http://nuanediao.cc
+url: http://nuansediao.cc
 root: /
 permalink: :year/:month/:day/:title/
 permalink_defaults:
@@ -39,10 +39,9 @@ relative_link: false
 future: true
 highlight:
   enable: true
-  line_number: false
+  line_number: true
   auto_detect: true
   tab_replace:
-  style: 'github'
 
 # Category & Tag
 default_category: uncategorized
@@ -64,14 +63,11 @@ pagination_dir: page
 # Extensions
 ## Plugins: https://hexo.io/plugins/
 ## Themes: https://hexo.io/themes/
-theme: hexo-theme-yilia
+theme: maupassant
 
 # Deployment
 ## Docs: https://hexo.io/docs/deployment.html
-deploy:
+deploy:  
   type: git
   repo: git@github.com:nuansediao/nuansediao.github.io.git
   branch: master
-
-
-
